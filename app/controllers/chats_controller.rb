@@ -27,12 +27,8 @@ class ChatsController < ApplicationController
   end
 
   def chat_conversation
-    conversation = Conversation.where(sender_id: @current_user.id, recipient_id: recipient.id)
-                               .or(Conversation.where(sender_id: recipient.id,
-                                                      recipient_id: @current_user.id))
-                               .first
-
-    conversation.present? ? conversation : create_conversation
+    conversation = Conversation.between(@current_user.id, recipient.id)
+    conversation.present? ? conversation.first : create_conversation
   end
 
   def create_conversation
