@@ -8,17 +8,6 @@ RSpec.describe 'Conversations API', type: :request do
   let(:samid_headers) { valid_headers(samid.id) }
 
   describe 'GET /conversations' do
-    let(:conversations) { Conversation.all }
-
-    before do
-      create_list(:conversation, 5, sender: dimas, recipient: samid)
-
-      conversations.each do |convo|
-        create(:chat, sender: convo.recipient, conversation: convo)
-        create(:chat, sender: convo.sender, conversation: convo)
-      end
-    end
-
     context 'when user have no conversation' do
       # make HTTP get request before each example
       before { get '/conversations', params: {}, headers: dimas_headers }
@@ -34,7 +23,18 @@ RSpec.describe 'Conversations API', type: :request do
     context 'when user have conversations' do
       # TODOS: Populate database with conversation of current user
 
-      before { get '/conversations', params: {}, headers: dimas_headers }
+      let(:conversations) { Conversation.all }
+
+      before do
+        create_list(:conversation, 5, sender: dimas, recipient: samid)
+
+        conversations.each do |convo|
+          create(:chat, sender: convo.recipient, conversation: convo)
+          create(:chat, sender: convo.sender, conversation: convo)
+        end
+
+        get '/conversations', params: {}, headers: dimas_headers
+      end
 
       it 'returns list conversations of current user' do
         # Note `response_data` is a custom helper

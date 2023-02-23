@@ -2,25 +2,26 @@ class ConversationsController < ApplicationController
   before_action :conversation, only: [:show, :messages]
 
   def index
-    @conversations = ActiveModelSerializers::SerializableResource.new \
-      @current_user.conversations, each_serializer: ConversationListSerializer
+    conversations = @current_user.conversations
+    return json_response([]) unless conversations.present?
 
-    json_response(@conversations)
+    json_response(conversation_list_serializer(conversations))
   end
 
   def show
-    return json_response(conversation_serializer) if owner?
-
-    json_response({ error: 'Unauthorized Access' }, :forbidden)
+    owner? ? json_response(conversation_serializer) : unauthorized_response
   end
 
   def messages
-    return json_response(chat_list_serializer) if owner?
-
-    json_response({ error: 'Unauthorized Access' }, :forbidden)
+    owner? ? json_response(chat_list_serializer) : unauthorized_response
   end
 
   private
+
+  def conversation_list_serializer(conversations)
+    ActiveModelSerializers::SerializableResource.new(conversations,
+                                                     each_serializer: ConversationListSerializer)
+  end
 
   def conversation_serializer
     ActiveModelSerializers::SerializableResource.new(conversation,
@@ -38,5 +39,9 @@ class ConversationsController < ApplicationController
 
   def owner?
     conversation.sender.eql? @current_user
+  end
+
+  def unauthorized_response
+    json_response({ error: 'Unauthorized Access' }, :forbidden)
   end
 end
