@@ -1,3 +1,5 @@
+require 'be_json_type_matcher'
+
 module RequestSpecHelper
   # Parse JSON response to ruby hash
   def response_body
