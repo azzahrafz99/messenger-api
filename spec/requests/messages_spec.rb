@@ -10,8 +10,9 @@ RSpec.describe 'Messages API', type: :request do
 
   # TODO: create conversation between Dimas and Agus, then set convo_id variable
 
+  let(:convo) { create(:conversation, sender: dimas, recipient: agus) }
+
   describe 'get list of messages' do
-    let(:convo)     { create(:conversation, sender: dimas, recipient: agus) }
     let!(:chat)     { create(:chat, conversation: convo, sender: dimas) }
     let!(:convo_id) { convo.id }
 
@@ -65,7 +66,7 @@ RSpec.describe 'Messages API', type: :request do
     end
 
     context 'when request attributes are valid' do
-      before { post '/messages', params: valid_attributes, headers: dimas_headers }
+      before { post '/messages', params: valid_attributes.to_json, headers: dimas_headers }
 
       it 'returns status code 201 (created) and create conversation automatically' do
         expect_response(
@@ -92,7 +93,9 @@ RSpec.describe 'Messages API', type: :request do
     end
 
     context 'when create message into existing conversation' do
-      before { post '/messages', params: valid_attributes, headers: dimas_headers }
+      let!(:convo_id) { convo.id }
+
+      before { post '/messages', params: valid_attributes.to_json, headers: dimas_headers }
 
       it 'returns status code 201 (created) and create conversation automatically' do
         expect_response(
@@ -119,7 +122,7 @@ RSpec.describe 'Messages API', type: :request do
     end
 
     context 'when an invalid request' do
-      before { post '/messages', params: invalid_attributes, headers: dimas_headers }
+      before { post '/messages', params: invalid_attributes.to_json, headers: dimas_headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
