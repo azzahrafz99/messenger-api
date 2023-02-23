@@ -8,6 +8,17 @@ RSpec.describe 'Conversations API', type: :request do
   let(:samid_headers) { valid_headers(samid.id) }
 
   describe 'GET /conversations' do
+    let(:conversations) { Conversation.all }
+
+    before do
+      create_list(:conversation, 5, sender: dimas, recipient: samid)
+
+      conversations.each do |convo|
+        create(:chat, sender: convo.recipient, conversation: convo)
+        create(:chat, sender: convo.sender, conversation: convo)
+      end
+    end
+
     context 'when user have no conversation' do
       # make HTTP get request before each example
       before { get '/conversations', params: {}, headers: dimas_headers }
@@ -22,17 +33,6 @@ RSpec.describe 'Conversations API', type: :request do
 
     context 'when user have conversations' do
       # TODOS: Populate database with conversation of current user
-      let(:convo)  { create :conversation, sender: dimas, recipient: samid }
-      let(:convo2) { create :conversation, sender: dimas, recipient: samid }
-      let(:convo3) { create :conversation, sender: dimas, recipient: samid }
-      let(:convo4) { create :conversation, sender: dimas, recipient: samid }
-      let(:convo5) { create :conversation, sender: dimas, recipient: samid }
-
-      let!(:chat)  { create(:chat, sender: samid, conversation: convo) }
-      let!(:chat2) { create(:chat, sender: dimas, conversation: convo2) }
-      let!(:chat3) { create(:chat, sender: samid, conversation: convo3) }
-      let!(:chat4) { create(:chat, sender: samid, conversation: convo4) }
-      let!(:chat5) { create(:chat, sender: dimas, conversation: convo5) }
 
       before { get '/conversations', params: {}, headers: dimas_headers }
 
@@ -72,7 +72,7 @@ RSpec.describe 'Conversations API', type: :request do
   end
 
   describe 'GET /conversations/:id' do
-    let(:convo) { create :conversation, sender: dimas }
+    let(:convo) { create(:conversation, sender: dimas) }
 
     context 'when the record exists' do
       # TODO: create conversation of dimas
