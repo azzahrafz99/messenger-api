@@ -20,7 +20,7 @@ class ConversationListSerializer < ActiveModel::Serializer
         id: last_chat.sender.id,
         name: last_chat.sender.name
       },
-      send_at: last_chat.created_at
+      sent_at: last_chat.created_at
     }
   end
 
