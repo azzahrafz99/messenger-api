@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_23_021258) do
+ActiveRecord::Schema.define(version: 2023_02_23_024010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "chats", force: :cascade do |t|
+    t.bigint "conversation_id"
+    t.bigint "sender_id"
+    t.text "message"
+    t.datetime "read_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["conversation_id"], name: "index_chats_on_conversation_id"
+    t.index ["sender_id"], name: "index_chats_on_sender_id"
+  end
 
   create_table "conversations", force: :cascade do |t|
     t.bigint "recipient_id"
@@ -33,6 +44,7 @@ ActiveRecord::Schema.define(version: 2023_02_23_021258) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "chats", "users", column: "sender_id"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
 end
