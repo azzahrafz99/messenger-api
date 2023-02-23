@@ -2,12 +2,12 @@ class ConversationSerializer < ActiveModel::Serializer
   attributes :id, :with_user
 
   def with_user
-    sender = object.sender
+    user = object.recipient
 
     {
-      id: sender.id,
-      name: sender.name,
-      photo_url: sender.photo_url
+      id: user.id,
+      name: user.name,
+      photo_url: user.photo_url
     }
   end
 end
