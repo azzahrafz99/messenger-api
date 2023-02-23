@@ -9,21 +9,23 @@ class ConversationsController < ApplicationController
   end
 
   def show
-    if conversation.sender.eql? @current_user
-      json_response(show_conversation_serializer)
-    else
-      json_response({ error: 'Unauthorized Access' }, :forbidden)
-    end
+    return json_response(conversation_serializer) if owner?
+
+    json_response({ error: 'Unauthorized Access' }, :forbidden)
   end
 
   private
 
-  def show_conversation_serializer
+  def conversation_serializer
     ActiveModelSerializers::SerializableResource.new(conversation,
                                                      serializer: ConversationSerializer)
   end
 
   def conversation
     @conversation ||= Conversation.find(params[:id])
+  end
+
+  def owner?
+    conversation.sender.eql? @current_user
   end
 end
