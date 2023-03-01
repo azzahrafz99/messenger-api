@@ -16,7 +16,7 @@ class ConversationListSerializer < ActiveModel::Serializer
   end
 
   def unread_count
-    chats.where(sender: object.recipient, read_at: nil).count
+    object.unread_chats.count
   end
 
   private

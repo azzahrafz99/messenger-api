@@ -4,6 +4,10 @@ class Conversation < ApplicationRecord
 
   has_many :chats
 
+  def unread_chats
+    chats.where(sender: recipient, read_at: nil)
+  end
+
   def self.between(sender_id, recipient_id)
     where(sender_id: sender_id, recipient_id: recipient_id)
       .or(where(sender_id: recipient_id, recipient_id: sender_id))
