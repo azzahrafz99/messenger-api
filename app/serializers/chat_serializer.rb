@@ -6,10 +6,6 @@ class ChatSerializer < ActiveModel::Serializer
     { id: sender.id, name: sender.name }
   end
 
-  def sent_at
-    object.created_at
-  end
-
   def conversation
     conversation = object.conversation
     convo_sender = conversation.sender
