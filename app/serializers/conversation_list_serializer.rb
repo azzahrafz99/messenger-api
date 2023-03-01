@@ -2,13 +2,7 @@ class ConversationListSerializer < ActiveModel::Serializer
   attributes :id, :with_user, :last_message, :unread_count
 
   def with_user
-    sender = object.sender
-
-    {
-      id: sender.id,
-      name: sender.name,
-      photo_url: sender.photo_url
-    }
+    object.sender.as_json
   end
 
   def last_message
@@ -16,10 +10,7 @@ class ConversationListSerializer < ActiveModel::Serializer
 
     {
       id: last_chat.id,
-      sender: {
-        id: last_chat.sender.id,
-        name: last_chat.sender.name
-      },
+      sender: last_chat.sender_as_json,
       sent_at: last_chat.created_at
     }
   end

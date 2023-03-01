@@ -5,4 +5,8 @@ class Chat < ApplicationRecord
   def sent_at
     created_at
   end
+
+  def sender_as_json
+    { id: sender.id, name: sender.name }
+  end
 end
