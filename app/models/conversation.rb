@@ -4,8 +4,12 @@ class Conversation < ApplicationRecord
 
   has_many :chats
 
-  def unread_chats
-    chats.where(sender: recipient, read_at: nil)
+  def unread_chats(current_user)
+    chats.where(read_at: nil).where.not(sender: current_user)
+  end
+
+  def user(current_user)
+    sender.eql?(current_user) ? recipient : sender
   end
 
   def self.between(sender_id, recipient_id)

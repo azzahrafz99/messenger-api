@@ -2,11 +2,11 @@ class ConversationListSerializer < ActiveModel::Serializer
   attributes :id, :with_user, :last_message, :unread_count
 
   def with_user
-    object.sender.as_json
+    object.user(current_user).as_json
   end
 
   def last_message
-    last_chat = chats.last
+    last_chat = object.chats.last
 
     {
       id: last_chat.id,
@@ -16,12 +16,12 @@ class ConversationListSerializer < ActiveModel::Serializer
   end
 
   def unread_count
-    object.unread_chats.count
+    object.unread_chats(current_user).count
   end
 
   private
 
-  def chats
-    object.chats
+  def current_user
+    @instance_options[:current_user]
   end
 end

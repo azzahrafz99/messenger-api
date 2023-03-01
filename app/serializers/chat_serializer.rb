@@ -6,10 +6,14 @@ class ChatSerializer < ActiveModel::Serializer
   end
 
   def conversation
-    conversation = object.conversation
-    convo_sender = conversation.sender
-    user         = object.sender.eql?(convo_sender) ? conversation.recipient : convo_sender
+    ActiveModelSerializers::SerializableResource.new \
+      object.conversation, serializer: ConversationSerializer,
+      current_user: current_user
+  end
 
-    { id: conversation.id, with_user: user.as_json }
+  private
+
+  def current_user
+    @instance_options[:current_user]
   end
 end

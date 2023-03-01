@@ -23,7 +23,8 @@ class ChatsController < ApplicationController
   end
 
   def chat_serializer(chat)
-    ActiveModelSerializers::SerializableResource.new(chat, serializer: ChatSerializer)
+    ActiveModelSerializers::SerializableResource.new \
+      chat, serializer: ChatSerializer, current_user: @current_user
   end
 
   def chat_conversation

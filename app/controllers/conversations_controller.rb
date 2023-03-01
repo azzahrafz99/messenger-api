@@ -20,7 +20,8 @@ class ConversationsController < ApplicationController
 
   def conversation_list_serializer(conversations)
     ActiveModelSerializers::SerializableResource.new(conversations,
-                                                     each_serializer: ConversationListSerializer)
+                                                     each_serializer: ConversationListSerializer,
+                                                     current_user: @current_user)
   end
 
   def conversation_serializer
