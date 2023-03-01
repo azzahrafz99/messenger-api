@@ -5,7 +5,7 @@ class Conversation < ApplicationRecord
   has_many :chats
 
   def unread_chats(current_user)
-    chats.where(read_at: nil).where.not(sender: current_user)
+    chats.unread.where.not(sender: current_user)
   end
 
   def user(current_user)

@@ -2,6 +2,8 @@ class Chat < ApplicationRecord
   belongs_to :conversation
   belongs_to :sender, foreign_key: :sender_id, class_name: 'User'
 
+  scope :unread, -> { where(read_at: nil) }
+
   def sent_at
     created_at
   end
