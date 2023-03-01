@@ -4,6 +4,8 @@ class Chat < ApplicationRecord
 
   scope :unread, -> { where(read_at: nil) }
 
+  validates :message, presence: true
+
   def sent_at
     created_at
   end

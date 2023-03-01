@@ -1,8 +1,6 @@
 class ChatsController < ApplicationController
   def create
-    return response_message_empty if message.blank?
-
-    chat = Chat.new(conversation: chat_conversation, sender: @current_user, message: message)
+    chat = Chat.new(chat_params)
     return json_response(chat_serializer(chat), :created) if chat.save
 
     json_response({ errors: chat.errors }, :unprocessable_entity)
@@ -14,12 +12,11 @@ class ChatsController < ApplicationController
     User.find(params[:user_id])
   end
 
-  def response_message_empty
-    json_response({ error: 'Invalid Request' }, :unprocessable_entity)
-  end
-
-  def message
-    params[:message]
+  def chat_params
+    {
+      conversation: chat_conversation, sender: @current_user,
+      message: params[:message]
+    }
   end
 
   def chat_serializer(chat)

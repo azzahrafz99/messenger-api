@@ -6,6 +6,10 @@ RSpec.describe Chat, type: :model do
     it { is_expected.to belong_to(:sender).class_name('User') }
   end
 
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of(:message) }
+  end
+
   describe '#unread' do
     let!(:chat)  { create(:chat, read_at: Time.current) }
     let!(:chat2) { create(:chat) }
