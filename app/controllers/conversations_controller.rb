@@ -43,6 +43,6 @@ class ConversationsController < ApplicationController
   end
 
   def unauthorized_response
-    json_response({ error: 'Unauthorized Access' }, :forbidden)
+    json_response({ error: Message.unauthorized }, :forbidden)
   end
 end
