@@ -39,7 +39,7 @@ class ConversationsController < ApplicationController
   end
 
   def owner?
-    conversation.sender.eql? @current_user
+    conversation.sender.eql?(@current_user) || conversation.recipient.eql?(@current_user)
   end
 
   def unauthorized_response
