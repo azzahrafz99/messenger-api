@@ -72,12 +72,7 @@ RSpec.describe 'Conversations API', type: :request do
   end
 
   describe 'GET /conversations/:id' do
-    let(:convo) { create(:conversation, sender: dimas) }
-
-    context 'when the record exists' do
-      # TODO: create conversation of dimas
-      before { get "/conversations/#{convo.id}", params: {}, headers: dimas_headers }
-
+    shared_examples 'returns conversation detail' do
       it 'returns conversation detail' do
         expect_response(
           :ok,
@@ -90,10 +85,37 @@ RSpec.describe 'Conversations API', type: :request do
             }
           }
         )
+
+        expect(response_data).to eq(
+          {
+            'id' => convo.id,
+            'with_user' => {
+              'id' => samid.id, 'name' => samid.name, 'photo_url' => samid.photo_url
+            }
+          }
+        )
+      end
+    end
+
+    context 'when the record exists' do
+      before { get "/conversations/#{convo.id}", params: {}, headers: dimas_headers }
+
+      context 'when dimas is sender' do
+        let(:convo) { create(:conversation, sender: dimas, recipient: samid) }
+
+        it_behaves_like 'returns conversation detail'
+      end
+
+      context 'when dimas is recipient' do
+        let(:convo) { create(:conversation, sender: samid, recipient: dimas) }
+
+        it_behaves_like 'returns conversation detail'
       end
     end
 
     context 'when current user access other user conversation' do
+      let(:convo) { create(:conversation) }
+
       before { get "/conversations/#{convo.id}", params: {}, headers: samid_headers }
 
       it 'returns status code 403' do
